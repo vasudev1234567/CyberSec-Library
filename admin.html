@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - CyberSec Tool Library</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav>
+        <h1>[ CyberSec Admin ]</h1>
+        <ul>
+            <li><a href="index.html">Library</a></li>
+            <li><a href="admin.html" class="active">Admin Panel</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="admin-panel">
+            <h2>> Add New Tool_</h2>
+            <form id="tool-form">
+                <div class="form-group">
+                    <label for="toolName">Tool Name</label>
+                    <input type="text" id="toolName" placeholder="e.g., Nmap" required>
+                </div>
+                
+                <div class="form-group file-upload-group">
+                    <label for="toolLogoFile">Upload Logo (Max 100KB)</label>
+                    <input type="file" id="toolLogoFile" accept="image/*" required>
+                    <small id="file-error" style="color: #ff4444; display: none; margin-top: 5px; font-weight: bold;">File is too large! Please select an image under 100KB.</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="toolDescription">Description</label>
+                    <textarea id="toolDescription" placeholder="Enter a detailed description of the tool..." required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="toolCommand">Command</label>
+                    <textarea id="toolCommand" placeholder="e.g., nmap -sC -sV <target> (You can paste multi-line commands here)" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="toolFlagDetails">Flag Details</label>
+                    <textarea id="toolFlagDetails" placeholder="Break down flags here... e.g., &#10;-sV: Determine service version&#10;-sC: Default scripts" required></textarea>
+                </div>
+                
+                <button type="submit" class="btn-save">Save Tool to LocalStorage</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Shared logic for storage and form handling -->
+    <script src="script.js"></script>
+</body>
+</html>

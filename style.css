@@ -1,0 +1,475 @@
+:root {
+    --bg-main: #0d0d0d;
+    --bg-card: rgba(17, 17, 17, 0.85);
+    --bg-input: rgba(0, 0, 0, 0.7);
+    --text-main: #00ff00;
+    --text-muted: #66cc66;
+    --neon-green: #00ff00;
+    --border-color: rgba(51, 51, 51, 0.8);
+    --font-sans: 'Courier New', Courier, monospace;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-sans);
+}
+
+body {
+    /* Linear gradient creates the dark 70% opacity overlay over the hacker background */
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=2070&auto=format&fit=crop');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: var(--text-main);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+/* Navigation Bar */
+nav {
+    background-color: var(--bg-card);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 20px 40px;
+    border-bottom: 2px solid var(--neon-green);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0, 255, 0, 0.1);
+}
+
+nav h1 {
+    color: var(--neon-green);
+    font-size: 1.8rem;
+    text-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+}
+
+nav a {
+    color: var(--text-main);
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1rem;
+    transition: color 0.3s, text-shadow 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+nav a:hover, nav a.active {
+    color: var(--neon-green);
+    text-shadow: 0 0 8px rgba(0, 255, 0, 0.5);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 50px auto;
+    padding: 0 20px;
+}
+
+/* Search Bar Styles */
+.search-wrapper {
+    margin-bottom: 30px;
+}
+
+#search-bar {
+    width: 100%;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    color: var(--neon-green);
+    padding: 15px 20px;
+    font-size: 1.2rem;
+    border-radius: 8px;
+    transition: all 0.3s;
+    outline: none;
+    font-family: var(--font-sans);
+}
+
+#search-bar:focus {
+    border-color: var(--neon-green);
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+}
+
+#search-bar::placeholder {
+    color: var(--text-muted);
+}
+
+/* Card Grid for Index (Main Library) */
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 30px;
+}
+
+.tool-card {
+    background-color: var(--bg-card);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--border-color);
+    border-left: 4px solid var(--neon-green);
+    border-radius: 8px;
+    padding: 25px;
+    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+}
+
+.tool-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 255, 0, 0.15);
+    border-color: var(--neon-green);
+}
+
+.tool-card h2 {
+    color: var(--neon-green);
+    margin-bottom: 15px;
+    font-size: 1.6rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.tool-card .desc {
+    color: var(--text-muted);
+    margin-bottom: 25px;
+    min-height: 50px;
+    font-size: 1.05rem;
+}
+
+/* Command Box Enhancements */
+.command-container {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.copy-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(34, 34, 34, 0.8);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: var(--font-sans);
+    font-weight: bold;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    z-index: 10;
+}
+
+.copy-btn:hover {
+    background-color: var(--neon-green);
+    color: #000;
+}
+
+.tool-card .command-box {
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    padding: 20px;
+    border-radius: 5px;
+    border: 1px dashed var(--neon-green);
+    overflow-x: auto;
+}
+
+.command-box pre {
+    margin: 0;
+    white-space: pre; /* Allows horizontal scrolling for long lines */
+    padding-right: 70px; /* Space for the copy button */
+}
+
+.tool-card code {
+    color: var(--neon-green);
+    font-size: 1.1rem;
+    word-break: normal;
+}
+
+/* Explanation Box */
+.explanation-box {
+    margin-bottom: 25px;
+    background-color: rgba(10, 10, 10, 0.7);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    padding: 18px;
+    border-left: 3px solid var(--border-color);
+    border-radius: 4px;
+}
+
+.explanation-box h4 {
+    color: var(--text-main);
+    margin-bottom: 12px;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Flag Table Styles */
+.table-responsive {
+    overflow-x: auto;
+    margin-top: 15px;
+}
+
+.flag-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+    color: var(--text-main);
+}
+
+.flag-table th, .flag-table td {
+    padding: 10px 15px;
+    border: 1px solid var(--border-color);
+    text-align: left;
+}
+
+.flag-table th {
+    background-color: rgba(26, 26, 26, 0.9);
+    color: var(--neon-green);
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.flag-table td {
+    background-color: rgba(13, 13, 13, 0.8);
+}
+
+.flag-table .flag-col {
+    color: var(--neon-green);
+    font-family: var(--font-sans);
+    font-weight: bold;
+    white-space: nowrap;
+    width: 30%;
+}
+
+.tool-card .delete-btn {
+    margin-top: 25px;
+    background: transparent;
+    border: 1px solid #ff4444;
+    color: #ff4444;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s;
+    font-family: var(--font-sans);
+}
+
+.tool-card .delete-btn:hover {
+    background: #ff4444;
+    color: #fff;
+    box-shadow: 0 0 10px rgba(255, 68, 68, 0.4);
+}
+
+/* Admin Form Styles */
+.admin-panel {
+    background-color: var(--bg-card);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 50px;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    max-width: 800px;
+    margin: 0 auto;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.admin-panel h2 {
+    color: var(--neon-green);
+    margin-bottom: 35px;
+    font-size: 2.2rem;
+    text-align: center;
+    text-shadow: 0 0 8px rgba(0, 255, 0, 0.2);
+}
+
+.form-group {
+    margin-bottom: 30px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 12px;
+    color: var(--text-main);
+    font-size: 1.15rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.form-group input, 
+.form-group textarea {
+    width: 100%;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    color: var(--neon-green);
+    padding: 18px;
+    font-size: 1.2rem;
+    border-radius: 6px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    outline: none;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 150px;
+}
+
+.form-group input:focus, 
+.form-group textarea:focus {
+    border-color: var(--neon-green);
+    box-shadow: 0 0 12px rgba(0, 255, 0, 0.25);
+}
+
+.btn-save {
+    background-color: var(--neon-green);
+    color: #000;
+    border: none;
+    padding: 18px 30px;
+    font-size: 1.3rem;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-top: 15px;
+}
+
+.btn-save:hover {
+    background-color: #00cc00;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+}
+
+/* Responsive adjustments for tablet and mobile */
+@media (max-width: 768px) {
+    nav {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .tools-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .admin-panel {
+        padding: 30px 20px;
+    }
+}
+
+/* Update compact cards for Main Library */
+.compact-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 30px 20px;
+}
+
+.card-header {
+    margin-bottom: 25px;
+}
+
+.tool-logo-small {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin-bottom: 15px;
+    background-color: rgba(255,255,255,0.05); /* So dark logos have contrast */
+    padding: 5px;
+    border-radius: 8px;
+}
+
+.card-actions {
+    display: flex;
+    gap: 15px;
+    width: 100%;
+    justify-content: center;
+}
+
+.btn-view-details, .btn-back {
+    display: inline-block;
+    background-color: var(--neon-green);
+    color: #000;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-family: var(--font-sans);
+    transition: all 0.2s;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+.btn-view-details:hover, .btn-back:hover {
+    background-color: #00cc00;
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.4);
+}
+
+.compact-card .delete-btn {
+    margin-top: 0;
+}
+
+/* Detail View Layout */
+.detail-card {
+    background-color: var(--bg-card);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--border-color);
+    border-top: 4px solid var(--neon-green);
+    border-radius: 8px;
+    padding: 40px;
+    margin-top: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.detail-header {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+    margin-bottom: 30px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 30px;
+}
+
+.tool-logo-large {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    background-color: rgba(255,255,255,0.05);
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.detail-header h2 {
+    color: var(--neon-green);
+    font-size: 2.2rem;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.detail-header .desc {
+    font-size: 1.15rem;
+    color: var(--text-main);
+}
+
+.detail-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 40px;
+    border-top: 1px solid var(--border-color);
+    padding-top: 20px;
+}
+
+@media (max-width: 768px) {
+    .detail-header {
+        flex-direction: column;
+        text-align: center;
+    }
+}
