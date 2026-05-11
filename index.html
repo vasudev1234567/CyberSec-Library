@@ -4,29 +4,158 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CyberSec Tool Library</title>
+    <meta name="description" content="CyberSec Library – A hacker-themed cybersecurity tool reference portal.">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <nav>
-        <h1>[ CyberSec Library ]</h1>
-        <ul>
-            <li><a href="index.html" class="active">Library</a></li>
-            <li><a href="admin.html">Admin Panel</a></li>
-        </ul>
-    </nav>
-    
-    <div class="container">
-        <!-- Search Bar -->
-        <div class="search-wrapper">
-            <input type="text" id="search-bar" placeholder="> Search tools by name..." autocomplete="off">
-        </div>
-        
-        <!-- Tools will be injected here from localStorage by app.js -->
-        <div class="tools-grid" id="tools-grid">
+    <!-- Splash Screen -->
+    <div id="splash-screen" class="splash-screen">
+        <canvas id="matrix-canvas"></canvas>
+        <div class="splash-content">
+            <h1 id="typewriter-text"></h1><span class="cursor">_</span>
         </div>
     </div>
 
-    <!-- Shared logic for storage and live search -->
+    <!-- ═══════════════════════════════════════ -->
+    <!--  RIGHT SIDEBAR                         -->
+    <!-- ═══════════════════════════════════════ -->
+    <aside id="cyber-sidebar" class="cyber-sidebar">
+        <!-- Kali Linux Logo -->
+        <div class="sidebar-logo">
+            <svg class="kali-logo-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <!-- Dragon body -->
+                <ellipse cx="100" cy="128" rx="42" ry="30" />
+                <!-- Neck -->
+                <ellipse cx="100" cy="90" rx="18" ry="22" />
+                <!-- Head -->
+                <circle cx="100" cy="62" r="26" />
+                <!-- Snout -->
+                <ellipse cx="113" cy="70" rx="16" ry="10" />
+                <!-- Nostril -->
+                <ellipse cx="120" cy="68" rx="3" ry="2" fill="#003300" />
+                <!-- Eye -->
+                <circle cx="90" cy="56" r="6" fill="#00ff00" />
+                <circle cx="90" cy="56" r="3" fill="#001100" />
+                <circle cx="88" cy="54" r="1.2" fill="#00ff88" />
+                <!-- Left Wing -->
+                <polygon points="58,118 10,58 38,123" />
+                <polygon points="58,118 5,82 38,123" />
+                <line x1="58" y1="118" x2="10" y2="58" stroke="#00ff00" stroke-width="1.5" opacity="0.5"/>
+                <line x1="58" y1="118" x2="20" y2="72" stroke="#00ff00" stroke-width="1" opacity="0.4"/>
+                <!-- Right Wing -->
+                <polygon points="142,118 190,58 162,123" />
+                <polygon points="142,118 195,82 162,123" />
+                <line x1="142" y1="118" x2="190" y2="58" stroke="#00ff00" stroke-width="1.5" opacity="0.5"/>
+                <line x1="142" y1="118" x2="180" y2="72" stroke="#00ff00" stroke-width="1" opacity="0.4"/>
+                <!-- Tail -->
+                <path d="M125,150 Q158,170 168,192 Q152,172 140,164" />
+                <!-- Left Leg -->
+                <line x1="80" y1="152" x2="68" y2="180" stroke-width="7" stroke-linecap="round"/>
+                <line x1="68" y1="180" x2="60" y2="187" stroke-width="5" stroke-linecap="round"/>
+                <line x1="68" y1="180" x2="72" y2="189" stroke-width="5" stroke-linecap="round"/>
+                <!-- Right Leg -->
+                <line x1="120" y1="152" x2="132" y2="180" stroke-width="7" stroke-linecap="round"/>
+                <line x1="132" y1="180" x2="128" y2="189" stroke-width="5" stroke-linecap="round"/>
+                <line x1="132" y1="180" x2="140" y2="187" stroke-width="5" stroke-linecap="round"/>
+                <!-- Horns -->
+                <polygon points="86,38 78,16 92,36" />
+                <polygon points="106,35 112,12 118,35" />
+                <!-- Spine Spikes -->
+                <polygon points="100,98 95,82 105,98" opacity="0.7"/>
+                <polygon points="112,102 108,87 118,102" opacity="0.6"/>
+                <polygon points="88,102 84,87 92,102" opacity="0.6"/>
+            </svg>
+            <span class="sidebar-logo-label">KALI LINUX</span>
+        </div>
+
+        <!-- Navigation Links -->
+        <nav class="sidebar-nav">
+            <a href="index.html" id="nav-library" class="sidebar-link active" title="Library">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                </svg>
+                <span>Library</span>
+            </a>
+            <a href="admin.html" id="nav-admin" class="sidebar-link" title="Admin Panel">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+                <span>Admin Panel</span>
+            </a>
+            <a href="settings.html" id="nav-settings" class="sidebar-link" title="Settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <!-- Sidebar Toggle Button (mobile) -->
+        <button class="sidebar-toggle-close" id="sidebar-close-btn" title="Close Sidebar">&#x2715;</button>
+    </aside>
+
+    <!-- Mobile sidebar open button -->
+    <button class="sidebar-open-btn" id="sidebar-open-btn" title="Open Menu">
+        <span></span><span></span><span></span>
+    </button>
+
+    <!-- Overlay for mobile sidebar -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!--  TOP NAV BAR (logo only now)           -->
+    <!-- ═══════════════════════════════════════ -->
+    <nav class="hacker-nav">
+        <div class="nav-scanline"></div>
+        <div class="nav-logo">
+            <svg class="glitch-icon" viewBox="0 0 24 24" width="32" height="32" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="4 17 10 11 4 5"></polyline>
+                <line x1="12" y1="19" x2="20" y2="19"></line>
+            </svg>
+            <span class="logo-text">SYS.ADMIN_</span>
+        </div>
+        <span class="nav-page-title">&gt; LIBRARY</span>
+    </nav>
+
+    <!-- Main Content (offset by sidebar width) -->
+    <div class="main-wrapper">
+        <div class="container">
+            <!-- Search Bar -->
+            <div class="search-wrapper">
+                <input type="text" id="search-bar" placeholder="> Search tools by name..." autocomplete="off">
+            </div>
+
+            <!-- Tools Grid -->
+            <div class="tools-grid" id="tools-grid"></div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!--  EDIT TOOL MODAL                       -->
+    <!-- ═══════════════════════════════════════ -->
+    <div id="edit-modal" class="edit-modal-overlay" role="dialog" aria-modal="true" aria-label="Edit Tool">
+        <div class="edit-modal-box">
+            <div class="edit-modal-header">
+                <h3>&gt; Edit Tool_</h3>
+                <button class="edit-modal-close" id="edit-modal-close" title="Close">&times;</button>
+            </div>
+            <form id="edit-tool-form">
+                <input type="hidden" id="edit-tool-id">
+                <div class="form-group">
+                    <label for="edit-tool-name">Tool Name</label>
+                    <input type="text" id="edit-tool-name" placeholder="e.g., Nmap" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-tool-command">Commands (one per line, use | to separate usage)</label>
+                    <textarea id="edit-tool-command" placeholder="nmap -sV | Detects service version..." required></textarea>
+                </div>
+                <button type="submit" class="btn-save" style="margin-top:0;">Update Tool</button>
+            </form>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>

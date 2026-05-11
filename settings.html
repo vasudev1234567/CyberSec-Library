@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - CyberSec Tool Library</title>
+    <meta name="description" content="Settings – Customize the CyberSec Library theme and wallpaper.">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+</head>
+<body>
+    <!-- ═══════════════════════════════════════ -->
+    <!--  LEFT SIDEBAR                          -->
+    <!-- ═══════════════════════════════════════ -->
+    <aside id="cyber-sidebar" class="cyber-sidebar">
+        <div class="sidebar-logo">
+            <svg class="kali-logo-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <ellipse cx="100" cy="128" rx="42" ry="30" />
+                <ellipse cx="100" cy="90" rx="18" ry="22" />
+                <circle cx="100" cy="62" r="26" />
+                <ellipse cx="113" cy="70" rx="16" ry="10" />
+                <ellipse cx="120" cy="68" rx="3" ry="2" fill="#003300" />
+                <circle cx="90" cy="56" r="6" fill="#00ff00" />
+                <circle cx="90" cy="56" r="3" fill="#001100" />
+                <circle cx="88" cy="54" r="1.2" fill="#00ff88" />
+                <polygon points="58,118 10,58 38,123" />
+                <polygon points="58,118 5,82 38,123" />
+                <line x1="58" y1="118" x2="10" y2="58" stroke="#00ff00" stroke-width="1.5" opacity="0.5"/>
+                <line x1="58" y1="118" x2="20" y2="72" stroke="#00ff00" stroke-width="1" opacity="0.4"/>
+                <polygon points="142,118 190,58 162,123" />
+                <polygon points="142,118 195,82 162,123" />
+                <line x1="142" y1="118" x2="190" y2="58" stroke="#00ff00" stroke-width="1.5" opacity="0.5"/>
+                <line x1="142" y1="118" x2="180" y2="72" stroke="#00ff00" stroke-width="1" opacity="0.4"/>
+                <path d="M125,150 Q158,170 168,192 Q152,172 140,164" />
+                <line x1="80" y1="152" x2="68" y2="180" stroke-width="7" stroke-linecap="round"/>
+                <line x1="68" y1="180" x2="60" y2="187" stroke-width="5" stroke-linecap="round"/>
+                <line x1="68" y1="180" x2="72" y2="189" stroke-width="5" stroke-linecap="round"/>
+                <line x1="120" y1="152" x2="132" y2="180" stroke-width="7" stroke-linecap="round"/>
+                <line x1="132" y1="180" x2="128" y2="189" stroke-width="5" stroke-linecap="round"/>
+                <line x1="132" y1="180" x2="140" y2="187" stroke-width="5" stroke-linecap="round"/>
+                <polygon points="86,38 78,16 92,36" />
+                <polygon points="106,35 112,12 118,35" />
+                <polygon points="100,98 95,82 105,98" opacity="0.7"/>
+                <polygon points="112,102 108,87 118,102" opacity="0.6"/>
+                <polygon points="88,102 84,87 92,102" opacity="0.6"/>
+            </svg>
+            <span class="sidebar-logo-label">KALI LINUX</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="index.html" id="nav-library" class="sidebar-link" title="Library">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                </svg>
+                <span>Library</span>
+            </a>
+            <a href="admin.html" id="nav-admin" class="sidebar-link" title="Admin Panel">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+                <span>Admin Panel</span>
+            </a>
+            <a href="settings.html" id="nav-settings" class="sidebar-link active" title="Settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <button class="sidebar-toggle-close" id="sidebar-close-btn" title="Close Sidebar">&#x2715;</button>
+    </aside>
+
+    <button class="sidebar-open-btn" id="sidebar-open-btn" title="Open Menu">
+        <span></span><span></span><span></span>
+    </button>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- Top Nav -->
+    <nav class="hacker-nav">
+        <div class="nav-scanline"></div>
+        <div class="nav-logo">
+            <svg class="glitch-icon" viewBox="0 0 24 24" width="32" height="32" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="4 17 10 11 4 5"></polyline>
+                <line x1="12" y1="19" x2="20" y2="19"></line>
+            </svg>
+            <span class="logo-text">SYS.ADMIN_</span>
+        </div>
+        <span class="nav-page-title">&gt; SETTINGS</span>
+    </nav>
+
+    <div class="main-wrapper">
+        <div class="container">
+            <div class="admin-panel" style="max-width: 900px;">
+                <h2>&gt; System Settings_</h2>
+
+                <!-- Theme Settings -->
+                <div class="form-group" style="margin-bottom: 40px;">
+                    <h3 style="color: var(--text-main); font-size: 1.5rem; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                        Theme Configuration</h3>
+                    <label for="themeSelect">Select Preset Theme</label>
+                    <select id="themeSelect"
+                        style="width: 100%; background-color: var(--bg-input); border: 1px solid var(--border-color); color: var(--neon-green); padding: 15px; font-size: 1.1rem; border-radius: 6px; outline: none; margin-bottom: 20px;">
+                        <option value="cyberpunk">Cyberpunk (Default)</option>
+                        <option value="matrix">Matrix (Deep Black &amp; Green)</option>
+                        <option value="midnight">Midnight Blue (Blue/Grey &amp; Cyan)</option>
+                        <option value="kali">Kali Linux Dragon (Interactive 3D)</option>
+                        <option value="light">Classic Light (Clean Mode)</option>
+                    </select>
+                </div>
+
+                <!-- Wallpaper Settings -->
+                <div class="form-group" style="margin-bottom: 40px;">
+                    <h3 style="color: var(--text-main); font-size: 1.5rem; margin-bottom: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                        Wallpaper Configuration</h3>
+
+                    <label>Preset Backgrounds</label>
+                    <div style="display: flex; gap: 15px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 10px;">
+                        <div class="wallpaper-thumb"
+                            data-url="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=2070&auto=format&fit=crop"
+                            style="min-width: 150px; height: 100px; border-radius: 6px; cursor: pointer; border: 2px solid transparent; background-image: url('https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=2070&auto=format&fit=crop'); background-size: cover; background-position: center;">
+                        </div>
+                        <div class="wallpaper-thumb"
+                            data-url="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop"
+                            style="min-width: 150px; height: 100px; border-radius: 6px; cursor: pointer; border: 2px solid transparent; background-image: url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop'); background-size: cover; background-position: center;">
+                        </div>
+                        <div class="wallpaper-thumb"
+                            data-url="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2070&auto=format&fit=crop"
+                            style="min-width: 150px; height: 100px; border-radius: 6px; cursor: pointer; border: 2px solid transparent; background-image: url('https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2070&auto=format&fit=crop'); background-size: cover; background-position: center;">
+                        </div>
+                    </div>
+
+                    <label for="customImageWallpaper" style="display: block; margin-top: 15px; margin-bottom: 5px; color: var(--text-main);">Option 1: Static Image Wallpaper (Local File)</label>
+                    <input type="file" accept="image/*" id="customImageWallpaper"
+                        style="width: 100%; background-color: var(--bg-input); border: 1px solid var(--border-color); color: white; padding: 10px; font-size: 1rem; border-radius: 4px; outline: none; cursor: pointer;">
+
+                    <label for="customLiveWallpaper" style="display: block; margin-top: 20px; margin-bottom: 5px; color: var(--text-main);">Option 2: Live Wallpaper (Local Video/GIF)</label>
+                    <input type="file" accept="video/*,image/gif" id="customLiveWallpaper"
+                        style="width: 100%; background-color: var(--bg-input); border: 1px solid var(--border-color); color: white; padding: 10px; font-size: 1rem; border-radius: 4px; outline: none; cursor: pointer;">
+                    <small style="color: #8b949e; display: block; margin-top: 8px;">* Note: Browser storage limits may restrict saving very large video files (&gt;5MB). Compress your media if necessary.</small>
+                </div>
+
+                <!-- Actions -->
+                <div style="display: flex; gap: 20px; margin-top: 30px;">
+                    <button id="saveSettingsBtn" class="btn-save" style="margin-top: 0;">Save Changes</button>
+                    <button id="resetSettingsBtn" class="btn-save"
+                        style="margin-top: 0; background-color: transparent; border: 1px solid #ff4444; color: #ff4444;">Reset to Default</button>
+                </div>
+
+                <p id="settings-status"
+                    style="color: var(--neon-green); margin-top: 15px; font-weight: bold; text-align: center; display: none;">
+                    Settings Saved Successfully!</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeSelect = document.getElementById('themeSelect');
+            const customImageWallpaper = document.getElementById('customImageWallpaper');
+            const customLiveWallpaper = document.getElementById('customLiveWallpaper');
+            const saveBtn = document.getElementById('saveSettingsBtn');
+            const resetBtn = document.getElementById('resetSettingsBtn');
+            const statusMsg = document.getElementById('settings-status');
+            const thumbs = document.querySelectorAll('.wallpaper-thumb');
+
+            let selectedWallpaper = localStorage.getItem('cyberWallpaper') || '';
+            let selectedWallpaperType = localStorage.getItem('cyberWallpaperType') || '';
+
+            themeSelect.value = localStorage.getItem('cyberTheme') || 'cyberpunk';
+
+            customImageWallpaper.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                customLiveWallpaper.value = '';
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    selectedWallpaper = event.target.result;
+                    selectedWallpaperType = 'image';
+                    updateThumbSelection();
+                };
+                reader.readAsDataURL(file);
+            });
+
+            customLiveWallpaper.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                customImageWallpaper.value = '';
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    selectedWallpaper = event.target.result;
+                    selectedWallpaperType = 'live';
+                    updateThumbSelection();
+                };
+                reader.readAsDataURL(file);
+            });
+
+            function updateThumbSelection() {
+                thumbs.forEach(t => {
+                    t.style.borderColor = (t.dataset.url === selectedWallpaper) ? 'var(--neon-green)' : 'transparent';
+                });
+            }
+            updateThumbSelection();
+
+            thumbs.forEach(thumb => {
+                thumb.addEventListener('click', () => {
+                    selectedWallpaper = thumb.dataset.url;
+                    selectedWallpaperType = 'image';
+                    customImageWallpaper.value = '';
+                    customLiveWallpaper.value = '';
+                    updateThumbSelection();
+                });
+            });
+
+            saveBtn.addEventListener('click', async () => {
+                localStorage.setItem('cyberTheme', themeSelect.value);
+                if (selectedWallpaper !== '') {
+                    try {
+                        await window.saveWallpaperDB(selectedWallpaper, selectedWallpaperType);
+                        localStorage.removeItem('cyberWallpaper');
+                        localStorage.removeItem('cyberWallpaperType');
+                    } catch (e) {
+                        alert("Error saving wallpaper to IndexedDB. File might be extremely large or corrupted.");
+                        return;
+                    }
+                } else {
+                    await window.clearWallpaperDB();
+                    localStorage.removeItem('cyberWallpaper');
+                    localStorage.removeItem('cyberWallpaperType');
+                }
+                await applyTheme();
+                statusMsg.textContent = 'Settings Saved Successfully!';
+                statusMsg.style.color = 'var(--neon-green)';
+                statusMsg.style.display = 'block';
+                setTimeout(() => { statusMsg.style.display = 'none'; }, 3000);
+            });
+
+            resetBtn.addEventListener('click', async () => {
+                localStorage.removeItem('cyberTheme');
+                localStorage.removeItem('cyberWallpaper');
+                localStorage.removeItem('cyberWallpaperType');
+                await window.clearWallpaperDB();
+                themeSelect.value = 'cyberpunk';
+                selectedWallpaper = '';
+                customImageWallpaper.value = '';
+                customLiveWallpaper.value = '';
+                updateThumbSelection();
+                await applyTheme();
+                statusMsg.textContent = 'Reset to Defaults!';
+                statusMsg.style.color = '#ff4444';
+                statusMsg.style.display = 'block';
+                setTimeout(() => { statusMsg.style.display = 'none'; }, 3000);
+            });
+        });
+    </script>
+</body>
+</html>

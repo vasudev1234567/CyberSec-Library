@@ -2,6 +2,261 @@
  * Shared Application Logic: LocalStorage handling, Library Rendering, and Form Submission
  */
 
+// --- IndexedDB Wrapper for Wallpapers ---
+const dbPromise = new Promise((resolve, reject) => {
+    const request = indexedDB.open('CyberSecDB', 1);
+    request.onupgradeneeded = (e) => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains('wallpapers')) {
+            db.createObjectStore('wallpapers');
+        }
+    };
+    request.onsuccess = (e) => resolve(e.target.result);
+    request.onerror = (e) => reject(e.target.error);
+});
+
+window.saveWallpaperDB = async function(data, type) {
+    const db = await dbPromise;
+    const tx = db.transaction('wallpapers', 'readwrite');
+    tx.objectStore('wallpapers').put({ data, type }, 'customWallpaper');
+    return new Promise((resolve, reject) => {
+        tx.oncomplete = resolve;
+        tx.onerror = reject;
+    });
+};
+
+window.getWallpaperDB = async function() {
+    const db = await dbPromise;
+    const tx = db.transaction('wallpapers', 'readonly');
+    const request = tx.objectStore('wallpapers').get('customWallpaper');
+    return new Promise((resolve, reject) => {
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = reject;
+    });
+};
+
+window.clearWallpaperDB = async function() {
+    const db = await dbPromise;
+    const tx = db.transaction('wallpapers', 'readwrite');
+    tx.objectStore('wallpapers').delete('customWallpaper');
+    return new Promise((resolve, reject) => {
+        tx.oncomplete = resolve;
+        tx.onerror = reject;
+    });
+};
+
+// --- Theme Management ---
+async function applyTheme() {
+    const savedTheme = localStorage.getItem('cyberTheme') || 'cyberpunk';
+    
+    // Check IndexedDB first for large wallpapers
+    let wallpaperData = null;
+    try {
+        wallpaperData = await window.getWallpaperDB();
+    } catch (e) {
+        console.error("IndexedDB error:", e);
+    }
+    
+    // Fallback to legacy localStorage if DB is empty
+    let savedWallpaper = '';
+    let dbWallpaperType = '';
+    
+    if (wallpaperData && wallpaperData.data) {
+        savedWallpaper = wallpaperData.data;
+        dbWallpaperType = wallpaperData.type;
+    } else {
+        savedWallpaper = localStorage.getItem('cyberWallpaper');
+        dbWallpaperType = localStorage.getItem('cyberWallpaperType');
+    }
+    
+    const root = document.documentElement;
+    if (savedTheme === 'cyberpunk') {
+        root.style.setProperty('--bg-main', '#0d0d0d');
+        root.style.setProperty('--bg-card', 'rgba(17, 17, 17, 0.85)');
+        root.style.setProperty('--text-main', '#00ff00');
+        root.style.setProperty('--text-muted', '#66cc66');
+        root.style.setProperty('--neon-green', '#00ff00');
+        root.style.setProperty('--border-color', 'rgba(51, 51, 51, 0.8)');
+    } else if (savedTheme === 'matrix') {
+        root.style.setProperty('--bg-main', '#000000');
+        root.style.setProperty('--bg-card', 'rgba(0, 20, 0, 0.85)');
+        root.style.setProperty('--text-main', '#33ff33');
+        root.style.setProperty('--text-muted', '#00aa00');
+        root.style.setProperty('--neon-green', '#33ff33');
+        root.style.setProperty('--border-color', 'rgba(0, 100, 0, 0.8)');
+    } else if (savedTheme === 'midnight') {
+        root.style.setProperty('--bg-main', '#0b132b');
+        root.style.setProperty('--bg-card', 'rgba(28, 37, 65, 0.85)');
+        root.style.setProperty('--text-main', '#00ffff');
+        root.style.setProperty('--text-muted', '#5bc0be');
+        root.style.setProperty('--neon-green', '#00ffff');
+        root.style.setProperty('--border-color', 'rgba(58, 80, 107, 0.8)');
+    } else if (savedTheme === 'kali') {
+        root.style.setProperty('--bg-main', '#050505');
+        root.style.setProperty('--bg-card', 'rgba(10, 10, 10, 0.85)');
+        root.style.setProperty('--text-main', '#00ff00');
+        root.style.setProperty('--text-muted', '#00cc00');
+        root.style.setProperty('--neon-green', '#00ff00');
+        root.style.setProperty('--border-color', 'rgba(0, 150, 0, 0.6)');
+    } else if (savedTheme === 'light') {
+        root.style.setProperty('--bg-main', '#f0f4f8');
+        root.style.setProperty('--bg-card', 'rgba(255, 255, 255, 0.9)');
+        root.style.setProperty('--text-main', '#1a202c');
+        root.style.setProperty('--text-muted', '#4a5568');
+        root.style.setProperty('--neon-green', '#3182ce');
+        root.style.setProperty('--border-color', 'rgba(203, 213, 224, 0.8)');
+    }
+    
+    // Apply background
+    function setBackground(wallpaper, theme, wallpaperType) {
+        
+        // Media Detection logic based on explicit user choice from settings, fallback to extension
+        let isVideo = false;
+        let isImage = false;
+        
+        if (wallpaperType === 'live') {
+            // GIF needs to be handled as an image fundamentally, but user considers it "live"
+            if (wallpaper && (wallpaper.match(/\.gif$/i) || wallpaper.startsWith('data:image/gif'))) {
+                isImage = true; 
+            } else {
+                isVideo = true;
+            }
+        } else if (wallpaperType === 'image') {
+            isImage = true;
+        } else {
+            // Legacy detection
+            isVideo = wallpaper && wallpaper.match(/\.(mp4|webm|ogg)$/i);
+            isImage = wallpaper && wallpaper.match(/\.(jpg|jpeg|png|webp|gif)$/i);
+        }
+        
+        // Clean up any existing video elements
+        const existingVid = document.getElementById('bg-video');
+        if (existingVid) existingVid.remove();
+        const existingOverlay = document.getElementById('bg-video-overlay');
+        if (existingOverlay) existingOverlay.remove();
+        
+        // Clean up existing Kali elements
+        const existingKali = document.getElementById('kali-bg-container');
+        if (existingKali) {
+            existingKali.remove();
+            if (window.kaliAnimationFrame) {
+                cancelAnimationFrame(window.kaliAnimationFrame);
+                window.kaliAnimationFrame = null;
+            }
+            if (window.kaliMouseEnterHandler) {
+                document.body.removeEventListener('mouseenter', window.kaliMouseEnterHandler);
+                document.body.removeEventListener('mouseleave', window.kaliMouseLeaveHandler);
+                window.kaliMouseEnterHandler = null;
+                window.kaliMouseLeaveHandler = null;
+            }
+        }
+        
+        // Reset default background image style
+        document.body.style.backgroundImage = 'none';
+        document.body.style.background = '';
+        
+        if (isVideo) {
+            // Add Video Wallpaper
+            const video = document.createElement('video');
+            video.id = 'bg-video';
+            video.src = wallpaper;
+            video.autoplay = true;
+            video.loop = true;
+            video.muted = true;
+            video.playsInline = true;
+            video.style.position = 'fixed';
+            video.style.top = '0';
+            video.style.left = '0';
+            video.style.width = '100vw';
+            video.style.height = '100vh';
+            video.style.objectFit = 'cover';
+            video.style.zIndex = '-2';
+            document.body.appendChild(video);
+            
+            // Add Dark Overlay for aesthetic consistency
+            const overlay = document.createElement('div');
+            overlay.id = 'bg-video-overlay';
+            overlay.style.position = 'fixed';
+            overlay.style.top = '0';
+            overlay.style.left = '0';
+            overlay.style.width = '100vw';
+            overlay.style.height = '100vh';
+            overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+            overlay.style.zIndex = '-1';
+            overlay.style.pointerEvents = 'none';
+            document.body.appendChild(overlay);
+        } else if (wallpaper) {
+            // Image Wallpaper (No linear gradient explicitly requested for custom URLs)
+            document.body.style.backgroundImage = "url('" + wallpaper + "')";
+            document.body.style.backgroundSize = 'cover';
+            document.body.style.backgroundPosition = 'center';
+            document.body.style.backgroundAttachment = 'fixed';
+        } else if (theme === 'kali' && !wallpaper) {
+            // Kali Theme Background
+            document.body.style.backgroundColor = '#050505';
+            
+            const kaliContainer = document.createElement('div');
+            kaliContainer.id = 'kali-bg-container';
+            kaliContainer.innerHTML = `
+                <img id="kali-dragon" src="https://upload.wikimedia.org/wikipedia/commons/2/2b/Kali-dragon-icon.svg" alt="Kali Logo">
+                <div id="kali-overlay"></div>
+            `;
+            document.body.appendChild(kaliContainer);
+            
+            const dragon = document.getElementById('kali-dragon');
+            let isHovering = false;
+            let rotY = 0;
+            let rotX = 0;
+            
+            window.kaliMouseEnterHandler = () => {
+                if (!isHovering) {
+                    isHovering = true;
+                    document.body.classList.add('kali-active-hover');
+                    function rotate() {
+                        if (!isHovering) return;
+                        rotY += 1.5;
+                        rotX += 0.5;
+                        dragon.style.transform = `rotateY(${rotY}deg) rotateX(${rotX}deg)`;
+                        window.kaliAnimationFrame = requestAnimationFrame(rotate);
+                    }
+                    rotate();
+                }
+            };
+            
+            window.kaliMouseLeaveHandler = () => {
+                isHovering = false;
+                document.body.classList.remove('kali-active-hover');
+                if (window.kaliAnimationFrame) {
+                    cancelAnimationFrame(window.kaliAnimationFrame);
+                }
+            };
+            
+            document.body.addEventListener('mouseenter', window.kaliMouseEnterHandler);
+            document.body.addEventListener('mouseleave', window.kaliMouseLeaveHandler);
+            
+        } else {
+            // Default Fallbacks
+            if (theme === 'light') {
+                document.body.style.background = '#f0f4f8';
+            } else {
+                document.body.style.backgroundImage = "linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=2070&auto=format&fit=crop')";
+                document.body.style.backgroundSize = 'cover';
+                document.body.style.backgroundPosition = 'center';
+                document.body.style.backgroundAttachment = 'fixed';
+            }
+        }
+    }
+
+    if (document.body) {
+        setBackground(savedWallpaper, savedTheme, dbWallpaperType);
+    } else {
+        document.addEventListener('DOMContentLoaded', () => {
+            setBackground(savedWallpaper, savedTheme, dbWallpaperType);
+        });
+    }
+}
+applyTheme();
+// ----------------------------
 const STORAGE_KEY = 'cybersec_tools';
 
 const defaultTools = [
@@ -58,7 +313,6 @@ function deleteTool(id) {
     const updatedTools = tools.filter(tool => tool.id !== id);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedTools));
     
-    // Determine where to re-render or redirect
     const toolsGrid = document.getElementById('tools-grid');
     if (toolsGrid) {
         const searchBar = document.getElementById('search-bar');
@@ -67,6 +321,49 @@ function deleteTool(id) {
         window.location.href = 'index.html';
     }
 }
+
+function updateTool(id, name, command) {
+    const tools = getTools();
+    const idx = tools.findIndex(t => t.id === id);
+    if (idx === -1) return;
+    tools[idx].name    = name;
+    tools[idx].command = command;
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(tools));
+        console.log(`[Storage Update] Updated tool: ${name}`);
+    } catch (e) {
+        console.error('[Storage Error] Failed to update tool.', e);
+        alert('Storage error: Could not save changes.');
+    }
+}
+
+// --- Edit Modal ---
+function openEditModal(id) {
+    const tools = getTools();
+    const tool = tools.find(t => t.id === id);
+    if (!tool) return;
+    
+    const modal = document.getElementById('edit-modal');
+    if (!modal) return;
+    
+    document.getElementById('edit-tool-id').value      = tool.id;
+    document.getElementById('edit-tool-name').value    = tool.name;
+    document.getElementById('edit-tool-command').value = tool.command || '';
+    
+    modal.classList.add('modal-open');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeEditModal() {
+    const modal = document.getElementById('edit-modal');
+    if (!modal) return;
+    modal.classList.remove('modal-open');
+    document.body.style.overflow = '';
+}
+
+window.openEditModal = openEditModal;
+window.closeEditModal = closeEditModal;
+
 
 window.copyCommand = function(btn, commandText) {
     navigator.clipboard.writeText(commandText).then(() => {
@@ -113,10 +410,17 @@ function renderLibrary(searchTerm = '') {
         card.innerHTML = `
             <div class="card-header">
                 <img src="${tool.logoUrl}" alt="${tool.name} Logo" class="tool-logo-small" onerror="console.warn('[Image] Using fallback for ${tool.name}'); this.outerHTML='<div class=\\'css-placeholder tool-logo-small\\'>No Logo</div>';">
-                <h2>> ${tool.name}</h2>
+                <h2>&gt; ${tool.name}</h2>
             </div>
             <div class="card-actions">
                 <a href="details.html?id=${tool.id}" class="btn-view-details">View Details</a>
+                <button class="edit-btn" onclick="openEditModal('${tool.id}')">
+                    <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                    Edit
+                </button>
                 <button class="delete-btn" onclick="deleteTool('${tool.id}')">Delete</button>
             </div>
         `;
@@ -145,33 +449,51 @@ function renderDetails() {
         return;
     }
 
-    let explanationHTML = '';
-    if (tool.flagDetails) {
-        const rows = tool.flagDetails.split('\n').filter(line => line.trim() !== '');
-        let tableRows = rows.map(line => {
-            const parts = line.split(':');
-            if(parts.length >= 2) {
-                const flag = parts.shift().trim();
-                const desc = parts.join(':').trim();
-                return `<tr><td class="flag-col">${flag}</td><td>${desc}</td></tr>`;
-            } else {
-                return `<tr><td colspan="2">${line.trim()}</td></tr>`;
+    let commandHTML = '';
+    if (tool.command) {
+        const commandLines = tool.command.split('\n').filter(line => line.trim() !== '');
+        let commandTableRows = commandLines.map(line => {
+            let cmd = line.trim();
+            let desc = '';
+            
+            // Auto split commands by common separators
+            const separators = [' | ', ' - ', ' : ', ' // '];
+            for (const sep of separators) {
+                if (line.includes(sep)) {
+                    const parts = line.split(sep);
+                    cmd = parts.shift().trim();
+                    desc = parts.join(sep).trim();
+                    break;
+                }
             }
+            
+            return `
+                <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.05); transition: background-color 0.2s ease;" onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.05)'" onmouseout="this.style.backgroundColor='transparent'">
+                    <td style="padding: 16px 20px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 15px;">
+                            <code style="color: var(--neon-green); font-family: var(--font-sans); font-weight: bold; white-space: nowrap;">${cmd}</code>
+                            <button onclick="copyCommand(this, '${escapeQuotes(cmd)}')" style="background-color: rgba(34, 34, 34, 0.8); color: var(--text-main); border: 1px solid var(--border-color); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-family: var(--font-sans); font-size: 0.8rem; transition: all 0.2s;">Copy</button>
+                        </div>
+                    </td>
+                    <td style="padding: 16px 20px; color: #e2e8f0; font-size: 0.95rem;">
+                        ${desc || '<em style="color: rgba(255,255,255,0.3)">No description provided</em>'}
+                    </td>
+                </tr>
+            `;
         }).join('');
         
-        explanationHTML = `
-            <div class="explanation-box">
-                <h4>Flag Details:</h4>
-                <div class="table-responsive">
-                    <table class="flag-table">
-                        <thead>
+        commandHTML = `
+            <div style="margin-top: 30px;">
+                <div class="table-responsive" style="overflow-x: auto; background-color: #0d1117; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);">
+                    <table style="width: 100%; border-collapse: collapse; min-width: 600px;">
+                        <thead style="background-color: rgba(0, 0, 0, 0.4); border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
                             <tr>
-                                <th>Flag / Parameter</th>
-                                <th>Description</th>
+                                <th style="padding: 16px 20px; text-align: left; color: var(--neon-green); font-size: 0.9rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em; width: 45%;">Command</th>
+                                <th style="padding: 16px 20px; text-align: left; color: var(--neon-green); font-size: 0.9rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em;">Usage / Description</th>
                             </tr>
                         </thead>
                         <tbody>
-                            ${tableRows}
+                            ${commandTableRows}
                         </tbody>
                     </table>
                 </div>
@@ -185,18 +507,10 @@ function renderDetails() {
                 <img src="${tool.logoUrl}" alt="${tool.name} Logo" class="tool-logo-large" onerror="console.warn('[Image] Using fallback for ${tool.name}'); this.outerHTML='<div class=\\'css-placeholder tool-logo-large\\'>No Logo</div>';">
                 <div>
                     <h2>> ${tool.name}</h2>
-                    <p class="desc">${tool.description}</p>
                 </div>
             </div>
             
-            <div class="command-container">
-                <button class="copy-btn" onclick="copyCommand(this, '${escapeQuotes(tool.command)}')">Copy</button>
-                <div class="command-box">
-                    <pre><code>$ ${tool.command}</code></pre>
-                </div>
-            </div>
-            
-            ${explanationHTML}
+            ${commandHTML}
             
             <div class="detail-footer">
                 <a href="index.html" class="btn-back"><< Back to Library</a>
@@ -207,6 +521,78 @@ function renderDetails() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    // --- Splash Screen Logic ---
+    const splashScreen = document.getElementById("splash-screen");
+    if (splashScreen) {
+        if (sessionStorage.getItem('animationPlayed')) {
+            // Animation already played in this session, hide immediately
+            splashScreen.style.display = 'none';
+        } else {
+            // First time in this session, mark as played
+            sessionStorage.setItem('animationPlayed', 'true');
+
+            // Matrix Rain
+            const canvas = document.getElementById("matrix-canvas");
+            const ctx = canvas.getContext("2d");
+            
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            const matrix = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}";
+            const characters = matrix.split("");
+            const fontSize = 16;
+            const columns = canvas.width / fontSize;
+            const drops = [];
+            for (let x = 0; x < columns; x++) drops[x] = 1;
+            
+            function drawMatrix() {
+                ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = "#00FF00";
+                ctx.font = fontSize + "px monospace";
+                
+                for (let i = 0; i < drops.length; i++) {
+                    const text = characters[Math.floor(Math.random() * characters.length)];
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                    drops[i]++;
+                }
+            }
+            const matrixInterval = setInterval(drawMatrix, 35);
+            
+            // Resize Canvas on Window Resize
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+            
+            // Typewriter Effect
+            const textElement = document.getElementById("typewriter-text");
+            const textToType = "WELCOME TO CYBERWORLD";
+            let typeIndex = 0;
+            
+            function typeWriter() {
+                if (typeIndex < textToType.length) {
+                    textElement.innerHTML += textToType.charAt(typeIndex);
+                    typeIndex++;
+                    setTimeout(typeWriter, 100);
+                }
+            }
+            
+            setTimeout(typeWriter, 500); // Start typing after 500ms
+            
+            // Fade out after exactly 4.5 seconds
+            setTimeout(() => {
+                clearInterval(matrixInterval);
+                splashScreen.style.opacity = '0';
+                setTimeout(() => {
+                    splashScreen.style.display = 'none';
+                }, 800); // Wait for the CSS transition
+            }, 4500);
+        }
+    }
+    // --- End Splash Screen Logic ---
+
     initStorage();
 
     renderLibrary();
@@ -225,9 +611,9 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
 
             const name = document.getElementById('toolName').value.trim();
-            const description = document.getElementById('toolDescription').value.trim();
+            const description = ""; // Field removed
             const command = document.getElementById('toolCommand').value.trim();
-            const flagDetails = document.getElementById('toolFlagDetails').value.trim();
+            const flagDetails = ""; // Field removed
             
             const fileInput = document.getElementById('toolLogoFile');
             const fileError = document.getElementById('file-error');
@@ -245,7 +631,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             fileError.style.display = 'none';
 
-            if (name && description && command && flagDetails) {
+            if (name && command) {
                 console.log(`[Form Submit] Processing tool: ${name}...`);
                 
                 // Convert file to Base64 using FileReader
@@ -279,6 +665,74 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // Triggers the onload event once reading is complete
                 reader.readAsDataURL(file);
+            }
+        });
+    }
+    
+    // --- Blue Dragon Dropdown Logic (removed, replaced by sidebar) ---
+    // Sidebar open/close toggle
+    const sidebarEl    = document.getElementById('cyber-sidebar');
+    const openBtn      = document.getElementById('sidebar-open-btn');
+    const closeBtn     = document.getElementById('sidebar-close-btn');
+    const overlayEl    = document.getElementById('sidebar-overlay');
+
+    function openSidebar() {
+        if (sidebarEl)  sidebarEl.classList.add('sidebar-open');
+        if (overlayEl)  overlayEl.classList.add('visible');
+    }
+    function closeSidebar() {
+        if (sidebarEl)  sidebarEl.classList.remove('sidebar-open');
+        if (overlayEl)  overlayEl.classList.remove('visible');
+    }
+
+    if (openBtn)  openBtn.addEventListener('click', openSidebar);
+    if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
+    if (overlayEl) overlayEl.addEventListener('click', closeSidebar);
+
+    // --- Edit Modal Logic ---
+    const editModalCloseBtn = document.getElementById('edit-modal-close');
+    if (editModalCloseBtn) {
+        editModalCloseBtn.addEventListener('click', closeEditModal);
+    }
+
+    const editModal = document.getElementById('edit-modal');
+    if (editModal) {
+        // Close on backdrop click
+        editModal.addEventListener('click', (e) => {
+            if (e.target === editModal) closeEditModal();
+        });
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && editModal.classList.contains('modal-open')) {
+                closeEditModal();
+            }
+        });
+    }
+
+    const editToolForm = document.getElementById('edit-tool-form');
+    if (editToolForm) {
+        editToolForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id      = document.getElementById('edit-tool-id').value;
+            const name    = document.getElementById('edit-tool-name').value.trim();
+            const command = document.getElementById('edit-tool-command').value.trim();
+
+            if (name && command) {
+                updateTool(id, name, command);
+                closeEditModal();
+                renderLibrary(document.getElementById('search-bar') ? document.getElementById('search-bar').value : '');
+
+                // Flash success feedback on the button
+                const submitBtn = editToolForm.querySelector('.btn-save');
+                const orig = submitBtn.textContent;
+                submitBtn.textContent = 'UPDATED!';
+                submitBtn.style.backgroundColor = '#005500';
+                submitBtn.style.color = '#fff';
+                setTimeout(() => {
+                    submitBtn.textContent = orig;
+                    submitBtn.style.backgroundColor = '';
+                    submitBtn.style.color = '';
+                }, 1500);
             }
         });
     }
